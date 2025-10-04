@@ -1,9 +1,7 @@
-import { createRoot } from 'react-dom/client'
+import { createRoot } from 'react-dom/client';
 // Styles
-import './index.css'
+import './index.css';
 // Components
-import EditorRenderer from "./components/renderers/editor-renderer.tsx";
+import EditorRenderer from './components/renderers/editor-renderer.tsx';
 
-createRoot(document.getElementById('root')!).render(
-  <EditorRenderer />
-)
+createRoot(document.getElementById('root')!).render(<EditorRenderer />);

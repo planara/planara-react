@@ -1,36 +1,56 @@
 import React, { useEffect, useRef } from 'react';
-import { EditorRenderer as CoreEditorRenderer } from '@planara/core';
+import cubeObj from '../../assets/cube.obj?raw';
+import { EditorRenderer as CoreEditorRenderer, ObjLoader } from '@planara/core';
 
 const EditorRenderer: React.FC = () => {
-    const canvasRef = useRef<HTMLCanvasElement>(null);
-    const rendererRef = useRef<CoreEditorRenderer | null>(null);
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const rendererRef = useRef<CoreEditorRenderer | null>(null);
 
-    useEffect(() => {
-        if (!canvasRef.current) return;
+  useEffect(() => {
+    if (!canvasRef.current) return;
 
-        rendererRef.current = new CoreEditorRenderer(canvasRef.current);
-        rendererRef.current.loop();
+    const canvas = canvasRef.current!;
+    const parent = canvas.parentElement!;
 
-        const canvas = canvasRef.current!;
-        const width = 1500;
-        const height = 800;
+    const handleResize = () => {
+      const width = parent.clientWidth;
+      const height = parent.clientHeight;
 
-        canvas.width = width;
-        canvas.height = height;
+      canvas.width = width;
+      canvas.height = height;
 
-        rendererRef.current.gl.setSize(width, height);
-        rendererRef.current.camera.perspective({ aspect: width / height });
+      rendererRef.current?.resize();
+    };
 
-        const handleResize = () => rendererRef.current?.resize();
-        window.addEventListener('resize', handleResize);
+    rendererRef.current = new CoreEditorRenderer(canvasRef.current);
+    handleResize();
+    rendererRef.current.loop();
 
-        return () => {
-            window.removeEventListener('resize', handleResize);
-            rendererRef.current = null;
-        };
-    }, []);
+    window.addEventListener('resize', handleResize);
 
-    return <canvas ref={canvasRef} />;
+    return () => {
+      window.removeEventListener('resize', handleResize);
+      rendererRef.current = null;
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!rendererRef.current) return;
+
+    const renderer = rendererRef.current!;
+    const loader = new ObjLoader();
+
+    const figure = loader.load(cubeObj);
+    renderer.addFigure(figure);
+  }, []);
+
+  return (
+    <>
+      <div className="editor-renderer__container">
+        <canvas ref={canvasRef} height={1000} width={1000} />
+      </div>
+    </>
+  );
 };
 
 export default EditorRenderer;
