@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from 'react';
-import cubeObj from '../../assets/cube.obj?raw'
+import cubeObj from '../../assets/cube.obj?raw';
 import { EditorRenderer as CoreEditorRenderer, ObjLoader } from '@planara/core';
 
 const EditorRenderer: React.FC = () => {
