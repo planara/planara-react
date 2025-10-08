@@ -1,10 +1,17 @@
 import React, { useEffect, useRef } from 'react';
 import cubeObj from '../../assets/cube.obj?raw';
-import { EditorRenderer as CoreEditorRenderer, ObjLoader } from '@planara/core';
+import {
+  createAppHub,
+  EditorHub,
+  EditorRenderer as CoreEditorRenderer,
+  ObjLoader,
+} from '@planara/core';
+import { DisplayMode } from '@planara/types';
 
 const EditorRenderer: React.FC = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const rendererRef = useRef<CoreEditorRenderer | null>(null);
+  const hub = useRef<EditorHub | null>(null);
 
   useEffect(() => {
     if (!canvasRef.current) return;
@@ -23,6 +30,7 @@ const EditorRenderer: React.FC = () => {
     };
 
     rendererRef.current = new CoreEditorRenderer(canvasRef.current);
+    hub.current = createAppHub(rendererRef.current);
     handleResize();
     rendererRef.current.loop();
 
@@ -50,6 +58,8 @@ const EditorRenderer: React.FC = () => {
 
   return (
     <>
+      <button onClick={() => hub.current?.setDisplayMode(DisplayMode.Plane)}>Plane</button>
+      <button onClick={() => hub.current?.setDisplayMode(DisplayMode.Wireframe)}>Wireframe</button>
       <div className="editor-renderer__container">
         <canvas ref={canvasRef} height={1000} width={1000} />
       </div>
