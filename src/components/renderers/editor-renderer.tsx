@@ -1,17 +1,11 @@
 import React, { useEffect, useRef } from 'react';
 import cubeObj from '../../assets/cube.obj?raw';
-import {
-  createAppHub,
-  EditorHub,
-  EditorRenderer as CoreEditorRenderer,
-  ObjLoader,
-} from '@planara/core';
-import { DisplayMode } from '@planara/types';
+import { createAppHub, EditorHub, ObjLoader } from '@planara/core';
+import { DisplayMode, ToolType } from '@planara/types';
 
 const EditorRenderer: React.FC = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const rendererRef = useRef<CoreEditorRenderer | null>(null);
-  const hub = useRef<EditorHub | null>(null);
+  const rendererRef = useRef<EditorHub | null>(null);
 
   useEffect(() => {
     if (!canvasRef.current) return;
@@ -26,13 +20,12 @@ const EditorRenderer: React.FC = () => {
       canvas.width = width;
       canvas.height = height;
 
-      rendererRef.current?.resize();
+      rendererRef.current?.resizeRenderer();
     };
 
-    rendererRef.current = new CoreEditorRenderer(canvasRef.current);
-    hub.current = createAppHub(rendererRef.current);
+    rendererRef.current = createAppHub(canvas);
     handleResize();
-    rendererRef.current.loop();
+    rendererRef.current?.updateRenderer();
 
     window.addEventListener('resize', handleResize);
 
@@ -58,8 +51,15 @@ const EditorRenderer: React.FC = () => {
 
   return (
     <>
-      <button onClick={() => hub.current?.setDisplayMode(DisplayMode.Plane)}>Plane</button>
-      <button onClick={() => hub.current?.setDisplayMode(DisplayMode.Wireframe)}>Wireframe</button>
+      <button onClick={() => rendererRef.current?.setDisplayMode(DisplayMode.Plane)}>Plane</button>
+      <button onClick={() => rendererRef.current?.setDisplayMode(DisplayMode.Wireframe)}>
+        Wireframe
+      </button>
+      <button onClick={() => rendererRef.current?.setToolMode(ToolType.Translate)}>
+        Translate
+      </button>
+      <button onClick={() => rendererRef.current?.setToolMode(ToolType.Scale)}>Scale</button>
+      <button onClick={() => rendererRef.current?.setToolMode(ToolType.Rotate)}>Rotate</button>
       <div className="editor-renderer__container">
         <canvas ref={canvasRef} height={1000} width={1000} />
       </div>
