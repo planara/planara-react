@@ -33,7 +33,7 @@ const EditorRenderer: React.FC = () => {
       window.removeEventListener('resize', handleResize);
 
       if (rendererRef.current) {
-        rendererRef.current.destroy();
+        rendererRef.current.dispose();
         rendererRef.current = null;
       }
     };
