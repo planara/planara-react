@@ -10,7 +10,7 @@ const Editor = () => {
       <div className="editor__page__body">
         <EditorRenderer />
       </div>
-      {/*<FigureStats />*/}
+      <FigureStats />
     </div>
   );
 };
