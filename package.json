@@ -13,14 +13,13 @@
     "check-format": "prettier --check \"src/**/*.{ts,tsx,js,jsx,json,css,md}\""
   },
   "dependencies": {
-    "@planara/core": "^2.3.0",
-    "@planara/types": "^1.7.2",
+    "@planara/core": "^3.0.0",
+    "@planara/types": "^1.10.0",
     "@typescript-eslint/eslint-plugin": "^8.45.0",
     "@typescript-eslint/parser": "^8.45.0",
     "eslint-plugin-prettier": "^5.5.4",
     "react": "^19.1.1",
-    "react-dom": "^19.1.1",
-    "reflect-metadata": "^0.2.2"
+    "react-dom": "^19.1.1"
   },
   "devDependencies": {
     "@eslint/js": "^9.36.0",

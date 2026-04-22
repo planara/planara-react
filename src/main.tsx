@@ -1,8 +1,7 @@
-import 'reflect-metadata';
 import { createRoot } from 'react-dom/client';
 // Styles
 import './index.css';
-// Components
-import EditorRenderer from './components/renderers/editor-renderer.tsx';
+// Pages
+import Editor from './pages/editor.tsx';
 
-createRoot(document.getElementById('root')!).render(<EditorRenderer />);
+createRoot(document.getElementById('root')!).render(<Editor />);

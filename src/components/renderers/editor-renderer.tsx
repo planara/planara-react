@@ -1,11 +1,22 @@
+// Core
 import React, { useEffect, useRef } from 'react';
-// import cubeObj from '../../assets/cube.obj?raw';
-import { createAppHub, EditorHub } from '@planara/core';
+import { createAppHub, EditorHub, type IResponse } from '@planara/core';
 import { DisplayMode, FigureType, SceneMode, SelectMode, ToolType } from '@planara/types';
+import UiButton from '../button';
 
-const EditorRenderer: React.FC = () => {
+export const EditorRenderer: React.FC = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const rendererRef = useRef<EditorHub | null>(null);
+
+  const handle = (execute: () => IResponse | null | undefined) => {
+    return () => {
+      const response = execute();
+
+      if (response != null) {
+        console.log(response.message);
+      }
+    };
+  };
 
   useEffect(() => {
     if (!canvasRef.current) return;
@@ -17,19 +28,20 @@ const EditorRenderer: React.FC = () => {
       const width = parent.clientWidth;
       const height = parent.clientHeight;
 
-      canvas.width = width;
-      canvas.height = height;
+      canvas.style.width = `${width}px`;
+      canvas.style.height = `${height}px`;
 
       rendererRef.current?.resizeRenderer();
     };
 
     rendererRef.current = createAppHub(canvas);
     handleResize();
-    rendererRef.current?.updateRenderer();
+    rendererRef.current?.start();
 
     window.addEventListener('resize', handleResize);
 
     return () => {
+      rendererRef.current?.stop();
       window.removeEventListener('resize', handleResize);
 
       if (rendererRef.current) {
@@ -39,57 +51,84 @@ const EditorRenderer: React.FC = () => {
     };
   }, []);
 
-  // useEffect(() => {
-  //   if (!rendererRef.current) return;
-  //
-  //   const renderer = rendererRef.current!;
-  //   const loader = new ObjLoader();
-  //
-  //   const figure = loader.load(cubeObj);
-  //   renderer.addFigure(figure);
-  // }, []);
-
   return (
-    <>
-      <button onClick={() => rendererRef.current?.setDisplayMode(DisplayMode.Plane)}>Plane</button>
-      <button onClick={() => rendererRef.current?.setDisplayMode(DisplayMode.Wireframe)}>
-        Wireframe
-      </button>
-      <button onClick={() => rendererRef.current?.setToolMode(ToolType.Translate)}>
-        Translate
-      </button>
-      <button onClick={() => rendererRef.current?.setToolMode(ToolType.Scale)}>Scale</button>
-      <button onClick={() => rendererRef.current?.setToolMode(ToolType.Rotate)}>Rotate</button>
-      <button onClick={() => rendererRef.current?.setSelectMode(SelectMode.Mesh)}>Mesh</button>
-      <button onClick={() => rendererRef.current?.setSelectMode(SelectMode.Edge)}>Edge</button>
-      <button onClick={() => rendererRef.current?.addFigure(SceneMode.AddFigure, FigureType.Cube)}>
-        Add Cube
-      </button>
-      <button onClick={() => rendererRef.current?.addFigure(SceneMode.AddFigure, FigureType.Plane)}>
-        Add Plane
-      </button>
-      <button
-        onClick={() => rendererRef.current?.addFigure(SceneMode.AddFigure, FigureType.Cylinder)}
-      >
-        Add Cylinder
-      </button>
-      <button
-        onClick={() => rendererRef.current?.addFigure(SceneMode.AddFigure, FigureType.Sphere)}
-      >
-        Add Sphere
-      </button>
-      <button
-        onClick={() => rendererRef.current?.addFigure(SceneMode.AddFigure, FigureType.UVSphere)}
-      >
-        Add UVSphere
-      </button>
-      <button onClick={() => rendererRef.current?.setSceneMode(SceneMode.DeleteFigure)}>
-        Delete
-      </button>
+    <div className="editor__layout">
+      <div className="editor-buttons__layout">
+        <UiButton
+          onClick={handle(() => rendererRef.current?.setDisplayMode(DisplayMode.Plane))}
+          text={'Plane'}
+        />
+        <UiButton
+          onClick={handle(() => rendererRef.current?.setDisplayMode(DisplayMode.Wireframe))}
+          text={'Wireframe'}
+        />
+        <UiButton
+          onClick={handle(() => rendererRef.current?.setToolMode(ToolType.Translate))}
+          text={'Translate'}
+        />
+        <UiButton
+          onClick={handle(() => rendererRef.current?.setToolMode(ToolType.Scale))}
+          text={'Scale'}
+        />
+        <UiButton
+          onClick={handle(() => rendererRef.current?.setToolMode(ToolType.Rotate))}
+          text={'Rotate'}
+        />
+        <UiButton
+          onClick={handle(() => rendererRef.current?.setSelectMode(SelectMode.Mesh))}
+          text={'Mesh'}
+        />
+        <UiButton
+          onClick={handle(() => rendererRef.current?.setSelectMode(SelectMode.Face))}
+          text={'Face'}
+        />
+        <UiButton
+          onClick={handle(() => rendererRef.current?.setSelectMode(SelectMode.Edge))}
+          text={'Edge'}
+        />
+        <UiButton
+          onClick={handle(() => rendererRef.current?.setSelectMode(SelectMode.Vertex))}
+          text={'Vertex'}
+        />
+        <UiButton
+          onClick={handle(() =>
+            rendererRef.current?.addFigure(SceneMode.AddFigure, FigureType.Cube),
+          )}
+          text={'Add Cube'}
+        />
+        <UiButton
+          onClick={handle(() =>
+            rendererRef.current?.addFigure(SceneMode.AddFigure, FigureType.Plane),
+          )}
+          text={'Add Plane'}
+        />
+        <UiButton
+          onClick={handle(() =>
+            rendererRef.current?.addFigure(SceneMode.AddFigure, FigureType.Cylinder),
+          )}
+          text={'Add Cylinder'}
+        />
+        <UiButton
+          onClick={handle(() =>
+            rendererRef.current?.addFigure(SceneMode.AddFigure, FigureType.Sphere),
+          )}
+          text={'Add Sphere'}
+        />
+        <UiButton
+          onClick={handle(() =>
+            rendererRef.current?.addFigure(SceneMode.AddFigure, FigureType.UVSphere),
+          )}
+          text={'Add UVSphere'}
+        />
+        <UiButton
+          onClick={handle(() => rendererRef.current?.setSceneMode(SceneMode.DeleteFigure))}
+          text={'Delete'}
+        />
+      </div>
       <div className="editor-renderer__container">
         <canvas ref={canvasRef} height={1000} width={1000} />
       </div>
-    </>
+    </div>
   );
 };
 
