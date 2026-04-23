@@ -1,5 +1,5 @@
 import React, { useMemo, useState } from 'react';
-import type { EditorHub } from '@planara/core';
+import type { IEditorApi } from '../interfaces/editor-api';
 import { EditorHubContext } from '../contexts/editor-hub-context';
 
 interface EditorProviderProps {
@@ -7,7 +7,7 @@ interface EditorProviderProps {
 }
 
 export const EditorProvider: React.FC<EditorProviderProps> = ({ children }) => {
-  const [hub, setHub] = useState<EditorHub | null>(null);
+  const [hub, setHub] = useState<IEditorApi | null>(null);
 
   const value = useMemo(
     () => ({
