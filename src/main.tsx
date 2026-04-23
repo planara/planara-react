@@ -1,7 +1,6 @@
-import { createRoot } from 'react-dom/client';
-// Styles
-import './index.css';
-// Pages
-import Editor from './pages/editor.tsx';
+export { EditorProvider } from './providers/editor-provider';
+export { EditorCanvas } from './components/canvas/editor-canvas';
 
-createRoot(document.getElementById('root')!).render(<Editor />);
+export { useEditorHub, useEditorHubContext } from './contexts/editor-hub-context';
+export { useSelectionStats } from './hooks/use-selection-stats';
+export { makeEditorHandlers } from './actions/button.ts';
