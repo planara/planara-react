@@ -1,10 +1,9 @@
-// Core
 import { useEffect, useState } from 'react';
-// Types
-import type { EditorHub } from '@planara/core';
 import type { FigureTransform } from '@planara/types';
+import { useEditorHub } from '../contexts/editor-hub-context';
 
-export const useSelectionStats = (hub: EditorHub | null): FigureTransform | null => {
+export const useSelectionStats = (): FigureTransform | null => {
+  const hub = useEditorHub();
   const [stats, setStats] = useState<FigureTransform | null>(null);
 
   useEffect(() => {
@@ -13,12 +12,10 @@ export const useSelectionStats = (hub: EditorHub | null): FigureTransform | null
       return;
     }
 
-    // начальный снимок
     setStats(hub.getSelectionStats());
 
     return hub.onSelectionStatsChange(() => {
-      const next = hub.getSelectionStats();
-      setStats(next);
+      setStats(hub.getSelectionStats());
     });
   }, [hub]);
 

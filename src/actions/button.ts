@@ -1,10 +1,9 @@
-// Core
-import type { EditorHub } from '@planara/core';
 // Types
+import type { IEditorApi } from '../interfaces/editor-api';
 import { DisplayMode, FigureType, SceneMode, SelectMode, ToolType } from '@planara/types';
 
-/** Обработчики событий для кнопок */
-export const makeEditorHandlers = (hub: EditorHub | null) => ({
+/** Обработчики событий для кнопок редактора. */
+export const makeEditorHandlers = (hub: IEditorApi | null) => ({
   setPlaneMode: () => hub?.setDisplayMode(DisplayMode.Plane),
   setWireframeMode: () => hub?.setDisplayMode(DisplayMode.Wireframe),
   setTranslate: () => hub?.setToolMode(ToolType.Translate),
