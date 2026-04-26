@@ -1,73 +1,232 @@
-# React + TypeScript + Vite
+![build](https://github.com/planara/planara-react/actions/workflows/build.yml/badge.svg)
+![deploy](https://github.com/planara/planara-react/actions/workflows/deploy.yml/badge.svg)
+[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](https://opensource.org/licenses/MIT)
+[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](http://makeapullrequest.com)
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+[![npm downloads](https://img.shields.io/npm/dm/@planara/react.svg)](https://www.npmjs.com/package/@planara/react)
+[![npm total downloads](https://img.shields.io/npm/dt/@planara/react.svg)](https://www.npmjs.com/package/@planara/react)
 
-Currently, two official plugins are available:
+## Planara React
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+React-адаптер для 3D-редактора Planara.
 
-## React Compiler
+Пакет предоставляет готовые React-примитивы для встраивания редактора в приложение без прямой работы с `@planara/core`.
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## Установка
 
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
-
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```bash
+npm install @planara/react @planara/types
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+или
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```bash
+yarn add @planara/react @planara/types
 ```
+
+## Быстрый старт
+
+Оборачиваем страницу редактора в `EditorProvider` и рендерим `EditorCanvas`.
+
+```tsx
+import { EditorProvider, EditorCanvas } from '@planara/react';
+
+export const EditorPage = () => {
+  return (
+    <EditorProvider>
+      <div style={{ width: '100%', height: '100vh' }}>
+        <EditorCanvas />
+      </div>
+    </EditorProvider>
+  );
+};
+```
+
+* `EditorProvider` — хранит экземпляр редактора в контексте
+* `EditorCanvas` — создает редактор, управляет resize и dispose
+
+## Доступ к API редактора
+
+Использовать `useEditorHub()` необходимо внутри `EditorProvider`.
+
+```tsx
+import { useEditorHub } from '@planara/react';
+import { ToolType } from '@planara/types';
+
+export const Toolbar = () => {
+  const editor = useEditorHub();
+
+  return (
+    <button onClick={() => editor?.setToolMode(ToolType.Translate)}>
+      Translate
+    </button>
+  );
+};
+```
+
+## Готовые обработчики (Toolbar)
+
+Можно использовать `makeEditorHandlers()` для быстрого подключения кнопок.
+
+```tsx
+import { makeEditorHandlers, useEditorHub } from '@planara/react';
+
+export const Toolbar = () => {
+  const editor = useEditorHub();
+  const handlers = makeEditorHandlers(editor);
+
+  return (
+    <div>
+      <button onClick={handlers.setPlaneMode}>Plane</button>
+      <button onClick={handlers.setWireframeMode}>Wireframe</button>
+
+      <button onClick={handlers.setTranslate}>Translate</button>
+      <button onClick={handlers.setScale}>Scale</button>
+      <button onClick={handlers.setRotate}>Rotate</button>
+
+      <button onClick={handlers.setMeshSelect}>Mesh</button>
+      <button onClick={handlers.setEdgeSelect}>Edge</button>
+      <button onClick={handlers.setVertexSelect}>Vertex</button>
+
+      <button onClick={handlers.addCube}>Add Cube</button>
+      <button onClick={handlers.addCylinder}>Add Cylinder</button>
+      <button onClick={handlers.addSphere}>Add Sphere</button>
+
+      <button onClick={handlers.deleteFigure}>Delete</button>
+    </div>
+  );
+};
+```
+
+## Статистика выбранного объекта
+
+Хук `useSelectionStats()` возвращает трансформации выбранного объекта.
+
+```tsx
+import { useSelectionStats } from '@planara/react';
+
+export const Inspector = () => {
+  const stats = useSelectionStats();
+
+  if (!stats) {
+    return <div>Ничего не выбрано</div>;
+  }
+
+  const { position, rotation, scale, size } = stats;
+
+  return (
+    <div>
+      <div>
+        Position: {position.x.toFixed(2)} / {position.y.toFixed(2)} / {position.z.toFixed(2)}
+      </div>
+      <div>
+        Rotation: {rotation.x.toFixed(2)} / {rotation.y.toFixed(2)} / {rotation.z.toFixed(2)}
+      </div>
+      <div>
+        Scale: {scale.x.toFixed(2)} / {scale.y.toFixed(2)} / {scale.z.toFixed(2)}
+      </div>
+      <div>
+        Size: {size.x.toFixed(2)} / {size.y.toFixed(2)} / {size.z.toFixed(2)}
+      </div>
+    </div>
+  );
+};
+```
+
+## Обработка ответов редактора
+
+Методы редактора могут возвращать `IResponse`.
+
+* `null` — успешное выполнение
+* `IResponse` — действие заблокировано или произошла ошибка
+
+```tsx
+import { useEditorHub } from '@planara/react';
+import { ToolType } from '@planara/types';
+
+export const RotateButton = () => {
+  const editor = useEditorHub();
+
+  const handleClick = () => {
+    const response = editor?.setToolMode(ToolType.Rotate);
+
+    if (response?.blocked) {
+      console.warn(response.message);
+    }
+  };
+
+  return <button onClick={handleClick}>Rotate</button>;
+};
+```
+
+Можно подключить уведомления, тосты или алерты.
+
+## Полный пример
+
+```tsx
+import {
+  EditorProvider,
+  EditorCanvas,
+  makeEditorHandlers,
+  useEditorHub,
+  useSelectionStats,
+} from '@planara/react';
+
+const Toolbar = () => {
+  const editor = useEditorHub();
+  const handlers = makeEditorHandlers(editor);
+
+  return (
+    <div>
+      <button onClick={handlers.setTranslate}>Translate</button>
+      <button onClick={handlers.setRotate}>Rotate</button>
+      <button onClick={handlers.setMeshSelect}>Mesh</button>
+      <button onClick={handlers.setVertexSelect}>Vertex</button>
+      <button onClick={handlers.addCube}>Add Cube</button>
+    </div>
+  );
+};
+
+const Inspector = () => {
+  const stats = useSelectionStats();
+
+  if (!stats) return <aside>Ничего не выбрано</aside>;
+
+  return (
+    <aside>
+      <div>X: {stats.position.x.toFixed(2)}</div>
+      <div>Y: {stats.position.y.toFixed(2)}</div>
+      <div>Z: {stats.position.z.toFixed(2)}</div>
+    </aside>
+  );
+};
+
+export const EditorPage = () => {
+  return (
+    <EditorProvider>
+      <Toolbar />
+      <EditorCanvas />
+      <Inspector />
+    </EditorProvider>
+  );
+};
+```
+
+## Экспорты
+
+```ts
+import {
+  EditorProvider,
+  EditorCanvas,
+  useEditorHub,
+  useEditorHubContext,
+  useSelectionStats,
+  makeEditorHandlers,
+} from '@planara/react';
+```
+
+## Связанные пакеты
+
+* `@planara/core` — ядро редактора
+* `@planara/types` — общие типы
+* `@planara/three` — расширения Three.js
