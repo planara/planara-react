@@ -14,7 +14,7 @@ export default defineConfig({
     tsconfigPaths(),
     dts({
       insertTypesEntry: true,
-      tsconfigPath: resolve(__dirname, 'tsconfig.json'),
+      tsconfigPath: resolve(__dirname, 'tsconfig.lib.json'),
       exclude: ['vite.config.ts'],
     }),
   ],
