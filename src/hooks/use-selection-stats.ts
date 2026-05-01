@@ -1,5 +1,8 @@
+// Core
 import { useEffect, useState } from 'react';
+// Types
 import type { FigureTransform } from '@planara/types';
+// Contexts
 import { useEditorHub } from '../contexts/editor-hub-context';
 
 export const useSelectionStats = (): FigureTransform | null => {

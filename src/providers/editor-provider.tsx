@@ -1,5 +1,8 @@
+// Core
 import React, { useMemo, useState } from 'react';
+// Interfaces
 import type { IEditorApi } from '../interfaces/editor-api';
+// Contexts
 import { EditorHubContext } from '../contexts/editor-hub-context';
 
 interface EditorProviderProps {

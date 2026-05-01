@@ -1,4 +1,6 @@
+// Core
 import { createContext, useContext } from 'react';
+// Interfaces
 import type { IEditorApi } from '../interfaces/editor-api';
 
 export interface IEditorContext {
