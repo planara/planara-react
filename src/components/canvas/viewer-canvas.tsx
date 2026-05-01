@@ -1,28 +1,28 @@
 // Core
 import React, { useEffect, useRef } from 'react';
-import { createEditorHub } from '@planara/core';
+import { createViewerHub } from '@planara/core';
 // Interfaces
-import type { IEditorApi } from '../../interfaces/editor-api';
+import type { IViewerApi } from '../../interfaces/viewer-api';
 // Contexts
-import { useEditorHubContext } from '../../contexts/editor-hub-context';
+import { useViewerHubContext } from '../../contexts/viewer-hub-context';
 // Types
 import type { RendererConfigInput } from '@planara/types';
 
-interface EditorCanvasProps {
+interface ViewerCanvasProps {
   className?: string;
   width?: number;
   height?: number;
   config?: RendererConfigInput;
 }
 
-export const EditorCanvas: React.FC<EditorCanvasProps> = ({
+export const ViewerCanvas: React.FC<ViewerCanvasProps> = ({
   className,
   width = 1000,
   height = 1000,
   config,
 }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const { setHub } = useEditorHubContext();
+  const { setHub } = useViewerHubContext();
 
   useEffect(() => {
     if (!canvasRef.current) return;
@@ -31,24 +31,16 @@ export const EditorCanvas: React.FC<EditorCanvasProps> = ({
     const parent = canvas.parentElement;
     if (!parent) return;
 
-    const editorHub = createEditorHub(canvas, config);
+    const editorHub = createViewerHub(canvas, config);
 
-    const api: IEditorApi = {
-      setDisplayMode: (mode) => editorHub.setDisplayMode(mode),
-      setSelectMode: (mode) => editorHub.setSelectMode(mode),
-      setToolMode: (mode) => editorHub.setToolMode(mode),
+    const api: IViewerApi = {
       addFigure: (figure) => editorHub.addFigure(figure),
-      deleteFigure: () => editorHub.deleteFigure(),
       loadFigure: (content) => editorHub.loadFigure(content),
       loadScene: (content) => editorHub.loadScene(content),
-      exportScene: () => editorHub.exportScene(),
 
       resizeRenderer: () => editorHub.resizeRenderer(),
       start: () => editorHub.start(),
       stop: () => editorHub.stop(),
-
-      getSelectionStats: () => editorHub.getSelectionStats(),
-      onSelectionStatsChange: (listener) => editorHub.onSelectionStatsChange(listener),
     };
 
     setHub(api);
@@ -78,4 +70,4 @@ export const EditorCanvas: React.FC<EditorCanvasProps> = ({
   return <canvas ref={canvasRef} className={className} width={width} height={height} />;
 };
 
-export default EditorCanvas;
+export default ViewerCanvas;

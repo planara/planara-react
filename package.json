@@ -1,6 +1,6 @@
 {
   "name": "@planara/react",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "publishConfig": {
     "access": "public",
     "registry": "https://registry.npmjs.org/"
@@ -30,8 +30,8 @@
     "check-format": "prettier --check \"src/**/*.{ts,tsx,js,jsx,json,css,md}\""
   },
   "dependencies": {
-    "@planara/core": "^3.0.0",
-    "@planara/types": "^1.10.0"
+    "@planara/core": "^3.1.0",
+    "@planara/types": "^1.12.0"
   },
   "devDependencies": {
     "@eslint/js": "^9.36.0",

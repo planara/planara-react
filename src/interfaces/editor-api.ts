@@ -1,12 +1,12 @@
 // Types
-import type { IResponse } from '@planara/core';
 import type {
   DisplayMode,
   FigureTransform,
   FigureType,
-  SceneMode,
   SelectMode,
   ToolType,
+  IResponse,
+  ExportSceneResult,
 } from '@planara/types';
 
 /**
@@ -21,10 +21,13 @@ import type {
  */
 export interface IEditorApi {
   setDisplayMode(mode: DisplayMode): IResponse | null;
-  setSceneMode(mode: SceneMode): IResponse | null;
   setSelectMode(mode: SelectMode): IResponse | null;
   setToolMode(mode: ToolType): IResponse | null;
-  addFigure(mode: SceneMode, figure: FigureType): IResponse | null;
+  addFigure(figure: FigureType): IResponse | null;
+  deleteFigure(): IResponse | null;
+  loadFigure(content: string): IResponse | null;
+  loadScene(content: string): IResponse | null;
+  exportScene(): ExportSceneResult;
 
   resizeRenderer(): void;
   start(): void;
