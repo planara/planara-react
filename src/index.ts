@@ -10,3 +10,9 @@ export { EditorCanvas } from './components/canvas/editor-canvas';
 export { useEditorHub, useEditorHubContext } from './contexts/editor-hub-context';
 export { useSelectionStats } from './hooks/use-selection-stats';
 export { makeEditorHandlers } from './actions/button';
+
+// Benchmark
+export { BenchmarkProvider } from './providers/benchmark-provider';
+export { BenchmarkCanvas } from './components/canvas/benchmark-canvas';
+export { useBenchmarkHub, useBenchmarkHubContext } from './contexts/benchmark-hub-context';
+export { useBenchmarkMetrics } from './hooks/use-benchmark-metrics';
