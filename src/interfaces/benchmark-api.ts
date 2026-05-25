@@ -8,7 +8,7 @@ import type {
 export type MetricsListener = (metrics: BenchmarkMetrics | null) => void;
 
 export interface IBenchmarkApi {
-  run: (config: BenchmarkConfig) => BenchmarkRunResult;
+  run: (config: BenchmarkConfig) => Promise<BenchmarkRunResult>;
 
   getReport: () => BenchmarkReport;
 
